@@ -24,7 +24,7 @@ class StageToRedshiftOperator(BaseOperator):
                  s3_key: str,
                  json_path: str,
                  aws_region: str,
-                 ignore_headers: int = 1
+                 ignore_headers: int = 1,
                  *args, **kwargs):
 
         super(StageToRedshiftOperator, self).__init__(*args, **kwargs)
