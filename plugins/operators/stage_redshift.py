@@ -17,20 +17,20 @@ class StageToRedshiftOperator(BaseOperator):
     """
 
     def __init__(self,
-                 table_name: str,
-                 redshift_conn_id: str,
-                 aws_credentials_id: str,
-                 s3_bucket: str,
-                 s3_key: str,
-                 json_path: str,
-                 aws_region: str,
+                 redshift_conn_id: str = "",
+                 aws_credentials_id: str = "",
+                 table_name: str = "",
+                 s3_bucket: str = "",
+                 s3_key: str = "",
+                 json_path: str = "",
+                 aws_region: str = "",
                  ignore_headers: int = 1,
                  *args, **kwargs):
 
         super(StageToRedshiftOperator, self).__init__(*args, **kwargs)
-        self.table_name = table_name,
         self.redshift_conn_id = redshift_conn_id,
         self.aws_credentials_id = aws_credentials_id,
+        self.table_name = table_name,
         self.s3_bucket = s3_bucket,
         self.s3_key = s3_key,
         self.json_path = json_path,
@@ -41,7 +41,7 @@ class StageToRedshiftOperator(BaseOperator):
     def execute(self, context):
         aws_hook = AwsGenericHook(self.aws_credentials_id)
         credentials = aws_hook.get_credentials()
-        redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
+        redshift = PostgresHook(self.redshift_conn_id)
 
         self.log.info("Clearing data from destination Redshift table")
         redshift.run("DELETE FROM {}".format(self.table_name))

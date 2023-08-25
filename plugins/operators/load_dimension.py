@@ -6,9 +6,9 @@ class LoadDimensionOperator(BaseOperator):
     ui_color = '#80BD9E'
 
     def __init__(self,
-                 redshift_conn_id: str,
-                 table_name: str,
-                 sql: str,
+                 redshift_conn_id: str = "",
+                 table_name: str = "",
+                 sql: str = "",
                  append_only: bool = False,
                  *args, **kwargs):
 
