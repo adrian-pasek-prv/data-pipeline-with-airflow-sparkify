@@ -28,20 +28,20 @@ class StageToRedshiftOperator(BaseOperator):
                  *args, **kwargs):
 
         super(StageToRedshiftOperator, self).__init__(*args, **kwargs)
-        self.redshift_conn_id = redshift_conn_id,
-        self.aws_credentials_id = aws_credentials_id,
-        self.table_name = table_name,
-        self.s3_bucket = s3_bucket,
-        self.s3_key = s3_key,
-        self.json_path = json_path,
-        self.aws_region = aws_region,
-        self.ignore_headers = ignore_headers,
+        self.redshift_conn_id = redshift_conn_id
+        self.aws_credentials_id = aws_credentials_id
+        self.table_name = table_name
+        self.s3_bucket = s3_bucket
+        self.s3_key = s3_key
+        self.json_path = json_path
+        self.aws_region = aws_region
+        self.ignore_headers = ignore_headers
         
 
     def execute(self, context):
         aws_hook = AwsGenericHook(self.aws_credentials_id)
         credentials = aws_hook.get_credentials()
-        redshift = PostgresHook(self.redshift_conn_id)
+        redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
 
         self.log.info("Clearing data from destination Redshift table")
         redshift.run("DELETE FROM {}".format(self.table_name))
