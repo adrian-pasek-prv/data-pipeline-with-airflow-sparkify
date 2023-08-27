@@ -22,7 +22,7 @@ class StageToRedshiftOperator(BaseOperator):
                  table_name: str = "",
                  s3_bucket: str = "",
                  s3_key: str = "",
-                 json_path: str = "",
+                 json_path: str = "auto",
                  aws_region: str = "",
                  ignore_headers: int = 1,
                  *args, **kwargs):
@@ -50,13 +50,18 @@ class StageToRedshiftOperator(BaseOperator):
         rendered_key = self.s3_key.format(**context)
         s3_path = "s3://{}/{}".format(self.s3_bucket, rendered_key)
         
+        if self.json_path != "auto":
+            json_path = "s3://{}/{}".format(self.s3_bucket, self.json_path)
+        else:
+            json_path = self.json_path
+        
         formatted_sql = StageToRedshiftOperator.copy_sql.format(
             self.table_name,
             s3_path,
             credentials.access_key,
             credentials.secret_key,
             self.ignore_headers,
-            self.json_path,
+            json_path,
             self.aws_region
         )
         redshift.run(formatted_sql)

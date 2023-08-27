@@ -20,8 +20,8 @@ default_args = {
     'email_on_retry': False
 }
 
-@dag(start_date=datetime.datetime(2018, 1, 1, 0, 0, 0, 0),
-    end_date=datetime.datetime(2019, 1, 1, 0, 0, 0, 0),
+@dag(start_date=datetime.datetime(2018, 11, 1, 0, 0, 0, 0),
+    end_date=datetime.datetime(2019, 11, 30, 0, 0, 0, 0),
     default_args=default_args,
     schedule_interval='@daily',
     max_active_runs=1,
@@ -42,7 +42,7 @@ def sparkify_dwh_dag():
         aws_credentials_id="aws_credentials",
         table_name="staging_events",
         s3_bucket="udacity-dend",
-        s3_key="log_data/{data_interval_start.year}/{data_interval_start.month}/{data_interval_start.format('YYYY-MM-DD')}-events.json",
+        s3_key="log_data/{data_interval_start.year}/{data_interval_start.month}/{ds}-events.json",
         json_path="log_json_path.json",
         aws_region="us-west-2",
         ignore_headers=1,
@@ -55,7 +55,6 @@ def sparkify_dwh_dag():
         table_name="staging_songs",
         s3_bucket="udacity-dend",
         s3_key="song_data",
-        json_path="log_json_path.json",
         aws_region="us-west-2",
         ignore_headers=1,
     )
@@ -101,11 +100,11 @@ def sparkify_dwh_dag():
     
     run_data_quality_checks = DataQualityOperator(task_id="run_data_quality_checks",
                                                   redshift_conn_id="redshift",
-                                                  staging_table_names=["stage_events", "stage_songs"],
-                                                  table_column_map={"songplays": "songplay_id",
+                                                  staging_table_names=["staging_events", "staging_songs"],
+                                                  table_column_map={"songplays": "playid",
                                                                     "users": "userid",
-                                                                    "songs": "song_id",
-                                                                    "artist": "artist_id"}
+                                                                    "songs": "songid",
+                                                                    "artists": "artistid"}
     )
     
     
